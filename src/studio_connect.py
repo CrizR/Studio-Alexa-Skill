@@ -5,6 +5,7 @@ from src.util import Util
 
 
 class StudioConnect(object):
+    # Class for encapsulating login information and Https method calls
     username = ''
     password = ''
     api_key = ''
@@ -17,12 +18,14 @@ class StudioConnect(object):
         return super().__getattribute__(name)
 
     def reset_credentials(self):
+        # Resets the credentials for this user
         self.username = ''
         self.password = ''
         self.api_key = ''
         self.token = ''
 
     def valid_input(self, items: []):
+        # Determines if any of the given items are empty
         print("Validating Input")
         for item in items:
             if item == '' or item is None:
@@ -30,6 +33,7 @@ class StudioConnect(object):
         return True
 
     def build_url(self, op_type: str, method_type: str):
+        # Builds the url needed for retrieving data from the api
         print('Building URL')
         return "https://usstudio.inferencecommunications.com/studio_instance/studio-api/v1/" \
                + op_type \
@@ -38,6 +42,7 @@ class StudioConnect(object):
                + "/"
 
     def build_url_v2(self, op_type: str, method_type: str):
+        # Builds the v2 url needed for retrieving data from the api
         print('Building URL')
         return "https://usstudio.inferencecommunications.com/studio_instance/api/v1/outbound/call/" \
                + op_type \
@@ -46,6 +51,7 @@ class StudioConnect(object):
                + "/"
 
     def retrieve_token(self):
+        # Retrieves the token needed for authenticating the user
         self.valid_input([self.username, self.password, self.api_key])
         print("Retrieving Token")
         # Request Token
@@ -62,6 +68,7 @@ class StudioConnect(object):
             return
 
     def list_all_scripts(self, intent: str) -> str:
+        # Lists all the available scripts
         self.retrieve_token()
         self.valid_input([self.token])
         print("Listing Scripts")
@@ -83,6 +90,7 @@ class StudioConnect(object):
                                            util, intent, "Failed", "", True))
 
     def run_workflow(self, workflow_id: str, intent: str) -> str:
+        # Runs the workflow that matches the given id
         self.retrieve_token()
         self.valid_input([self.token, workflow_id])
         print("Starting Workflow")
@@ -96,6 +104,7 @@ class StudioConnect(object):
             intent, "Initializing Workflow" + json.loads(data.text)['result'], "", True))
 
     def update_workflow(self, workflow_id: str, name: str, status: str, intent: str) -> str:
+        # updates the workflow given the name and status arguments
         self.retrieve_token()
         self.valid_input([self.token, workflow_id, name, status])
         print("Updating Workflow")
@@ -109,6 +118,7 @@ class StudioConnect(object):
             intent, "Updating Workflow" + json.loads(data.text)['result']['message'], "", True))
 
     def start_callout(self, phone_num: str, intent: str) -> str:
+        # Stars a callout camapaign
         self.valid_input([self.api_key, phone_num])
         print("Starting Callout")
         data = requests.post(self.build_url_v2(self.api_key, phone_num))
